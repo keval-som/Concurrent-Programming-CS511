@@ -7,4 +7,4 @@ Welcome to my repository for homework and exercises from my **Concurrent Program
 This repository includes:
 - **Homework Assignments**: Exercises assigned during the course, focused on core concurrent programming principles.
 - **Practical Exercises**: Additional exercises to reinforce theoretical concepts, covering a range of scenarios from basic thread management to advanced concurrency techniques.
-- **Sample Solutions**: Solutions provided for certain tasks to illustrate best practices and demonstrate correct implementation of concurrency mechanisms.
+- **Solutions**: Solutions created by me, according to my understanding, and they may not be correct.
