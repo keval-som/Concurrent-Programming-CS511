@@ -5,7 +5,7 @@
 
 start() ->
     S = spawn(?MODULE, server, []),
-    [spawn(?MODULE, client, [S]) || _ <- lists:seq(1, 100000)].
+    [spawn(?MODULE, client, [S]) || _ <- lists:seq(1, 10)].
 
 client(S) ->
     S ! {start, self()},
@@ -27,15 +27,15 @@ client(S) ->
 server() ->
     receive
         {start, Pid} ->
-            Servlet = spawn(?MODULE, server, [Pid, ""]),
+            Servlet = spawn(?MODULE, servlet, [Pid, ""]),
             Pid ! {Servlet},
             server()
     end.
 
-server(Pid, Str) ->
+servlet(Pid, Str) ->
     receive
         {add, Char, Pid} ->
-            server(Pid, Str ++ Char);
+            servlet(Pid, Str ++ Char);
         {done, Pid} ->
             Pid ! {self(), Str}
     end.

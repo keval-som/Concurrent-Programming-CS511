@@ -5,30 +5,28 @@
 
 start() ->
     S = spawn(?MODULE, server, []),
-    [spawn(?MODULE, client, [S]) || _ <- lists:seq(1, 10)].
-
-client(S) ->
-    Rand = rand:uniform(100),
-    S ! {Rand, self()},
-    receive
-        {Msg} ->
-            io:format("Client ~p received ~p~n", [self(), Msg])
-    end.
+    spawn(?MODULE, client, [S]).
 
 server() ->
-    io:format("Server started~n"),
     receive
-        {Rand, Pid} ->
-            io:format("Server received ~p from ~p~n", [Rand, Pid]),
-            IsPrime =
-                lists:foldl(fun(X, Acc) ->
-                               case Rand rem X of
-                                   0 -> false;
-                                   _ -> Acc
-                               end
-                            end,
-                            true,
-                            lists:seq(2, Rand div 2)),
-            Pid ! {IsPrime},
+        {Pid, Number} ->
+            case lists:any(fun(N) -> Number rem N == 0 end, lists:seq(2, trunc(math:sqrt(Number))))
+            of
+                true ->
+                    Pid ! {Number, false};
+                false ->
+                    Pid ! {Number, true}
+            end,
             server()
+    end.
+
+client(Server) ->
+    Server ! {self(), rand:uniform(100)},
+    receive
+        {Number, false} ->
+            io:format("~p is prime: ~p~n", [Number, false]),
+            client(Server);
+        {Number, true} ->
+            io:format("~p is prime: ~p~n", [Number, true]),
+            client(Server)
     end.
